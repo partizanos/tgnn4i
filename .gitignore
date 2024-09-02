@@ -1,4 +1,5 @@
 ### Project Specific ###
+bkp
 dataset
 raw_data
 wandb
@@ -75,3 +76,29 @@ tags
 # Coc configuration directory
 .vim
 
+
+
+.DS_Store
+.coverage
+Pipfile
+all_code
+config.py
+h260824.logs
+h260824t1.logs
+step3_loader_tgnn4i.py
+step_2_mimic_demo.zip
+step_2_mimic_demo/
+testaaa
+ushcn-v2.5-stations.txt
+ushcn.prcp.latest.raw.tar.gz
+ushcn.v2.5.5.20240806/
+
+
+Pipfile
+h260824.logs
+h260824t1.logs
+step_2_mimic_demo.zip
+step_2_mimic_demo/
+ushcn-v2.5-stations.txt
+ushcn.prcp.latest.raw.tar.gz
+ushcn.v2.5.5.20240806/

@@ -1,3 +1,55 @@
+# shapes for tgnn4i try to find if i have same shapes there are how the dataloader sees shapes of correct stuff (paper dataset)
+coverage run --source=make_graph_3 -m unittest test_make_graph.py
+coverage report -m
+
+
+data_dict["train"]["y"].shape
+torch.Size([83, 72, 206, 1])
+(Pdb)     data_dict["train"]["t"].shape
+torch.Size([83, 72])
+(Pdb)     data_dict["train"]["delta_t"].shape
+torch.Size([83, 206, 72])
+(Pdb)     data_dict["train"]["features"].shape
+torch.Size([83, 72, 206, 1])
+(Pdb)     data_dict["train"]["mask"].shape
+torch.Size([83, 206, 72])
+(Pdb)     data_dict["edge_index"].shape
+torch.Size([2, 1515])
+(Pdb)     data_dict["edge_weight"].shape
+torch.Size([1515])
+# 
+python -c "import torch; print(torch.__version__); import torch_geometric; print(torch_geometric.__version__)"
+/Users/dproios/.local/share/virtualenvs/tgnn4i-eegqli62/bin/python
+pip install torch-geometric-temporal
+python -c "import torch_geometric_temporal; print(torch_geometric_temporal.__version__)"
+
+# notes  06 Aug 2024
+env:local mac 
+We used tgnn4i with exponential decay and NOT periodic dynamics on the traffic dataset.
+
+
+
+## play with toy dataset
+LOAD 
+python main.py --model tgnn4i --dataset g3_mimic_demo --periodic 0 --test 1
+python main.py --model tgnn4i --dataset traffic --periodic 0 --test 1
+works python main.py --model tgnn4i --dataset periodic_10_0.25_42 --periodic 0 --test 1
+
+## create toy dataset 
+### fail 
+wget -O ushcn-v2.5-stations.txt "https://www.ncei.noaa.gov/pub/data/ushcn/v2.5/ushcn-v2.5-stations.txt"
+
+
+wget -O ushcn.prcp.latest.raw.tar.gz "https://www.ncei.noaa.gov/pub/data/ushcn/v2.5/ushcn.prcp.latest.raw.tar.gz"
+TODO tar -xzvf ushcn.prcp.latest.raw.tar.gz -C .
+
+python generate_node_data.py --seed 42 --plot 0 --max_nodes_plot 5 --n_nodes 10 --graph_alg delaunay --n_neighbors 5 --T 2.0 --neighbor_weight 1.0 --lag 0.1 --noise_std 0.05 --batch_size 256 --n_t 20 --obs_nodes 0.27 --n_train 100 --n_val 50 --n_test 50
+
+`python main.py --model tgnn4i --dataset periodic_10_0.27_42
+
+## create real
+python step3_loader_tgnn4i.py
+
 # Temporal Graph Neural Networks for Irregular Data (TGNN4I)
 <p align="middle">
   <img src="model_illustration.png"/>

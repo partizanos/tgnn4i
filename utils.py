@@ -44,34 +44,47 @@ def to_tensor(a, device="cpu", dtype=torch.float32):
     if type(a) == torch.Tensor:
         return a.to(device=device, dtype=dtype)
     else:
-        return torch.tensor(a, device=device, dtype=dtype)
-
+        try:
+            return torch.tensor(a, device=device, dtype=dtype)
+        except:
+            import pdb; pdb.set_trace()
 def load_temporal_graph_data(ds_name, batch_size, compute_hop_mask=False, L_hop=1):
     # Always load into CPU memory here
     device = torch.device("cpu")
 
     data_dict = load_data(ds_name)
 
+    # import pdb; pdb.set_trace()
     # If full ptg graphs should be loaded
     load_graphs = ("graphs" in data_dict["train"])
 
     if not load_graphs:
-        edge_index = to_tensor(data_dict["edge_index"], device=device, dtype=torch.long)
+        # if type not tensor 
+        if "edge_index" in data_dict:
+            if not type(data_dict["edge_index"]) == torch.Tensor:
+                edge_index = to_tensor(data_dict["edge_index"], device=device, dtype=torch.long)
 
-        if "edge_weight" in data_dict:
-            edge_weight = to_tensor(data_dict["edge_weight"], device=device)
-        else:
-            edge_weight = torch.ones(edge_index.shape[1], device=device)
-        # Encode as edge attributes for correct batching
-        edge_attr = edge_weight.unsqueeze(1) # Shape (N_edges, 1)
+                if "edge_weight" in data_dict:
+                    edge_weight = to_tensor(data_dict["edge_weight"], device=device)
+                else:
+                    edge_weight = torch.ones(edge_index.shape[1], device=device)
+                        # Encode as edge attributes for correct batching
+                edge_attr = edge_weight.unsqueeze(1) # Shape (N_edges, 1)
 
     loaders = []
     for subset in ("train", "val", "test"):
         if load_graphs:
             graphs = data_dict[subset]["graphs"]
         else:
-            y = to_tensor(data_dict[subset]["y"], device) # (N_subset, N_T, N, 1)
-            t = to_tensor(data_dict[subset]["t"], device) # (N_subset, N_T)
+            # if type not tensor 
+            if type(data_dict[subset]["y"][0]) == torch.Tensor:
+                import pdb; pdb.set_trace()
+                y = torch.stack(data_dict[subset]["y"], dim=0) # (N_subset, N_T, N, 1)
+                t = torch.stack(data_dict[subset]["t"], dim=0)
+            else:
+                y = to_tensor(data_dict[subset]["y"], device) # (N_subset, N_T, N, 1)
+                t = to_tensor(data_dict[subset]["t"], device) # (N_subset, N_T)
+            
             if "mask" in data_dict[subset]:
                 delta_t = to_tensor(data_dict[subset]["delta_t"],
                         device) # (N_subset, N, N_T)

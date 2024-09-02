@@ -3,6 +3,8 @@ import torch_geometric as ptg
 import numpy as np
 import argparse
 import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.rcParams['text.usetex'] = False  # Disable LaTeX
 import os
 
 import utils
@@ -81,7 +83,7 @@ edges = undir_edges[:, undir_edges[0] < undir_edges[1]]
 if config["plot"]:
     print(f"Edges: {edges}")
     dag = ptg.data.Data(pos=graph_pos.pos, edge_index=edges)
-    vis.plot_graph(dag, show=True)
+    vis.plot_graph(dag, show=False)
 
 # Sample signals
 n_samples = config["n_train"] + config["n_val"] + config["n_test"]
@@ -192,7 +194,7 @@ if config["plot"]:
             ax.set_xlim(0., 1.)
 
             fig.savefig(os.path.join("plotting", "periodic_example.pdf"))
-            plt.show()
+            # plt.show()
 
 # Splits are train, val, test
 mask = obs_mask.transpose(1,2) # (N_samples, N, N_T)
@@ -232,4 +234,3 @@ save_dict["edge_index"] = edges
 utils.save_data(ds_name, config, save_dict)
 
 print("Data saved")
-
